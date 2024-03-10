@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/register","/login").permitAll()
 //                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers(UrlConstants.SESSION).permitAll()
+                        .requestMatchers(UrlConstants.LUNCH_PLAN_WEBSOCKET).permitAll()
                         .anyRequest().authenticated()
                 );
 

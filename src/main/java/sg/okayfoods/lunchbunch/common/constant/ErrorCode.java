@@ -10,6 +10,10 @@ public enum ErrorCode {
     EMAIL_ALREADY_IN_USE("AUTH002", HttpStatus.BAD_REQUEST, "Email Already in use"),
     INVALID_TOKEN("AUTH003", HttpStatus.FORBIDDEN, "Invalid Token"),
 
+    UNKNOWN_AUTH_ERROR_OCCURRED("AUTH004", HttpStatus.FORBIDDEN, "Unknown AUTH Error occurred"),
+    WS_MISSING_AUTH_TOKEN("WSAUTH001", HttpStatus.BAD_REQUEST, "Websocket URI missing authorization token"),
+
+
     ;
 
     private String code;

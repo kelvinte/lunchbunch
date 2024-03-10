@@ -3,6 +3,7 @@ package sg.okayfoods.lunchbunch.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -26,9 +27,13 @@ public class LunchPlan {
     @ManyToOne
     private AppUser initiatedBy;
 
+    @Column(name="date")
+    private LocalDate date;
+
+    @Column(name="description")
+    private String description;
+
     @Column(name="created_at")
     private LocalDateTime createdAt;
 
-    @Column(name="ended_at")
-    private LocalDateTime endedAt;
 }

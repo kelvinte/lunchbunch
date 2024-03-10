@@ -25,7 +25,6 @@ public class LunchPlanSuggestion {
     @ManyToOne
     private LunchPlan lunchPlan;
 
-    @JoinColumn(name="suggested_by")
-    @ManyToOne
-    private AppUser suggestedBy;
+    @Column(name="suggested_by")
+    private String suggestedBy;
 }

@@ -27,8 +27,9 @@ CREATE TABLE `lunch_plan`
     `id`           bigint PRIMARY KEY AUTO_INCREMENT,
     `uuid`         varchar(40) NOT NULL,
     `initiated_by` bigint      NOT NULL,
+    `date`    date    NOT NULL,
+    `description`   varchar(255) NOT NULL,
     `created_at`   datetime    default CURRENT_TIMESTAMP,
-    `ended_at`     datetime,
     FOREIGN KEY (initiated_by) REFERENCES app_user(id)
 ) engine = INNODB;
 
@@ -37,8 +38,7 @@ CREATE TABLE `lunch_plan_suggestion`
     `id`              bigint PRIMARY KEY AUTO_INCREMENT,
     `lunch_plan_id`      bigint      NOT NULL,
     `restaurant_name` varchar(40) not null,
-    `suggested_by`    bigint      NOT NULL,
-    FOREIGN KEY (suggested_by) REFERENCES app_user(id),
+    `suggested_by`    varchar(40)      NOT NULL,
     FOREIGN KEY (lunch_plan_id) REFERENCES lunch_plan(id)
 
 ) engine = INNODB;

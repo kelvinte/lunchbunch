@@ -6,6 +6,7 @@ public class UrlConstants {
     }
     public static final String REGISTER = "/register";
     public static final String LOGIN = "/login";
-    public static final String SESSION="/session";
-    public static final String SUGGESTIONS=SESSION+"/{id}/suggestion";
+    public static final String LUNCH_PLAN="/lunch-plan";
+    public static final String LUNCH_PLAN_WEBSOCKET="/lunch-plan-websock";
+    public static final String SUGGESTION = LUNCH_PLAN + "/{uuid}/suggestion";
 }

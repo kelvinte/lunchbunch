@@ -15,11 +15,14 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sg.okayfoods.lunchbunch.application.AuthenticationService;
 import sg.okayfoods.lunchbunch.application.JWTTokenService;
 import sg.okayfoods.lunchbunch.common.constant.Constants;
 import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
 import sg.okayfoods.lunchbunch.common.constant.UrlConstants;
+import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.common.util.JsonUtils;
+import sg.okayfoods.lunchbunch.domain.entity.AppUser;
 import sg.okayfoods.lunchbunch.domain.repository.AppUserRepository;
 import sg.okayfoods.lunchbunch.domain.user.LoggedInUser;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.GenericResponse;
@@ -34,12 +37,12 @@ public class JWTTokenFilter  extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String jwtSecretKey;
 
-    private final JWTTokenService jwtTokenService;
     private final AppUserRepository appUserRepository;
+    private final AuthenticationService authenticationService;
 
-    public JWTTokenFilter(JWTTokenService jwtTokenService,
+    public JWTTokenFilter(AuthenticationService authenticationService,
                                    AppUserRepository appUserRepository) {
-        this.jwtTokenService = jwtTokenService;
+        this.authenticationService = authenticationService;
         this.appUserRepository = appUserRepository;
     }
 
@@ -62,42 +65,48 @@ public class JWTTokenFilter  extends OncePerRequestFilter {
 
         jwt = jwt.substring(Constants.BEARER.length()).trim();
 
-        SecretKey key = Keys.hmacShaKeyFor(
-                jwtSecretKey.getBytes(StandardCharsets.UTF_8));
+//        SecretKey key = Keys.hmacShaKeyFor(
+//                jwtSecretKey.getBytes(StandardCharsets.UTF_8));
+//
+//        Claims claims = Jwts.parserBuilder()
+//                .setSigningKey(key)
+//                .build()
+//                .parseClaimsJws(jwt)
+//                .getBody();
+//        Long iat = claims.get(Constants.EXPIRY_CLAIM, Long.class);
+//        if(Instant.now().isAfter(Instant.ofEpochMilli(iat))){
+//            // expired
+//            invalidToken(response, ErrorCode.INVALID_TOKEN);
+//            return;
+//        }
+//
+//        String email = claims.get(Constants.SUB_CLAIM, String.class);
+//        String authorities = claims.get(Constants.AUTHORITY_CLAIM, String.class);
+//        Long userId = Long.valueOf(claims.get(Constants.USER_ID_CLAIM, String.class));
+//
+//        var appUser = appUserRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException(
+//                ErrorCode.INVALID_TOKEN.getMessage()));
+//
+//        if(!appUser.getId().equals(userId)){
+//            invalidToken(response, ErrorCode.INVALID_TOKEN);
+//            return;
+//        }
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jwt)
-                .getBody();
-        Long iat = claims.get(Constants.EXPIRY_CLAIM, Long.class);
-        if(Instant.now().isAfter(Instant.ofEpochMilli(iat))){
-            // expired
-            invalidToken(response, ErrorCode.INVALID_TOKEN);
-            return;
+        try {
+            AppUser user = authenticationService.validateToken(jwt);
+
+            Authentication auth = new LoggedInUser(user.getId(), user.getEmail(), null,
+                    AuthorityUtils.commaSeparatedStringToAuthorityList(user.getAppRole().getName()));
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            filterChain.doFilter(request, response);
+        }catch (AppException ex){
+            invalidToken(response, ex.getErrorCode());
+        }catch (Exception ex){
+            invalidToken(response, ErrorCode.UNKNOWN_AUTH_ERROR_OCCURRED);
         }
-
-        String email = claims.get(Constants.SUB_CLAIM, String.class);
-        String authorities = claims.get(Constants.AUTHORITY_CLAIM, String.class);
-        Long userId = Long.valueOf(claims.get(Constants.USER_ID_CLAIM, String.class));
-
-        var appUser = appUserRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException(
-                ErrorCode.INVALID_TOKEN.getMessage()));
-
-        if(!appUser.getId().equals(userId)){
-            invalidToken(response, ErrorCode.INVALID_TOKEN);
-            return;
-        }
-
-        Authentication auth = new LoggedInUser(userId, email, null,
-                AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        filterChain.doFilter(request, response);
-
     }
 
     private void invalidToken(HttpServletResponse response, ErrorCode errorCode) throws ServletException, IOException {
-
         GenericResponse genericResponse = errorCode.toGenericResponse();
         response.getWriter().write(JsonUtils.toJson(genericResponse));
         response.setStatus(HttpStatus.FORBIDDEN.value());

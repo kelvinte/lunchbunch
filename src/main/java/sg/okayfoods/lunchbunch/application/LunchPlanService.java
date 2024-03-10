@@ -1,11 +1,60 @@
 package sg.okayfoods.lunchbunch.application;
 
 import org.springframework.stereotype.Service;
+import sg.okayfoods.lunchbunch.common.util.DateTimeUtils;
+import sg.okayfoods.lunchbunch.domain.entity.AppUser;
+import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
 import sg.okayfoods.lunchbunch.domain.repository.LunchPlanRepository;
+import sg.okayfoods.lunchbunch.domain.repository.LunchPlanSuggestionRepository;
+import sg.okayfoods.lunchbunch.domain.user.LoggedInUser;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanDetailedResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanRequestDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.mapper.LunchPlanMapper;
+
+import java.util.UUID;
 
 @Service
 public class LunchPlanService {
 
+
+    private LunchPlanRepository lunchPlanRepository;
+    private LunchPlanSuggestionRepository lunchPlanSuggestionRepository;
+    private LunchPlanMapper lunchPlanMapper;
+
+    private LoggedInUserService loggedInUserService;
+    public LunchPlanService(LunchPlanRepository lunchPlanRepository,
+                            LunchPlanSuggestionRepository lunchPlanSuggestionRepository,
+                            LunchPlanMapper lunchPlanMapper,
+                            LoggedInUserService loggedInUserService) {
+        this.lunchPlanRepository = lunchPlanRepository;
+        this.lunchPlanSuggestionRepository = lunchPlanSuggestionRepository;
+        this.lunchPlanMapper = lunchPlanMapper;
+        this.loggedInUserService = loggedInUserService;
+    }
+
+    public LunchPlanResponseDTO create(LunchPlanRequestDTO request){
+
+        LoggedInUser loggedInUser = loggedInUserService.getLoggedInUser();
+        AppUser appUser = new AppUser();
+        appUser.setId(loggedInUser.getId());
+        LunchPlan lunchPlan = LunchPlan.builder()
+                .uuid(UUID.randomUUID().toString().replace("-",""))
+                .description(request.getDescription())
+                .date(DateTimeUtils.convert(request.getDate()))
+                .initiatedBy(appUser)
+                .build();
+
+        LunchPlan result = lunchPlanRepository.save(lunchPlan);
+        return lunchPlanMapper.map(result);
+    }
+
+    public LunchPlanDetailedResponseDTO get(String uuid) {
+        var lunchPlan = lunchPlanRepository.findByUuid(uuid);
+        var lunchPlanSuggestions = lunchPlanSuggestionRepository.findByLunchPlanId(lunchPlan.getId());
+
+        return lunchPlanMapper.map(lunchPlan, lunchPlanSuggestions);
+    }
 
 
     //    private Map<Long, Sinks.Many<SessionRestaurant>> sinkMap = new ConcurrentHashMap<>();
