@@ -1,5 +1,6 @@
 package sg.okayfoods.lunchbunch.infrastracture.adapter.handler;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -8,11 +9,13 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
+import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.handler.command.AuthorizationHandler;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.handler.command.Command;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.handler.command.SuggestionHandler;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +34,14 @@ public class WebsocketHandler extends TextWebSocketHandler {
 
     private HashMap<String, Command> commandHashMap;
 
-    public WebsocketHandler(AuthorizationHandler authorizationHandler, SuggestionHandler suggestionHandler) {
-        super();
+    public WebsocketHandler(AuthorizationHandler authorizationHandler, List<? extends Command> suggestionHandler) {
+
+        for(var actionEnum : WebSocketAction.values()){
+
+        }
+        for(var s: suggestionHandler){
+            commandHashMap.put(s.)
+        }
 //        this.authorizationHandler = authorizationHandler;
         this.commandHashMap = new HashMap<>();
         // Change to Spring dependency inject
@@ -52,17 +61,34 @@ public class WebsocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        super.handleTextMessage(session, message);
+//        super.handleTextMessage(session, message);
         /*
         SUGGEST
         GET
          */
         if(session.isOpen()) {
             String queuryParam = getQueryParam(session.getUri());
-            commandHashMap.get(queuryParam).handle(session);
+            if(!StringUtils.isEmpty(queuryParam)){
+                String payload = message.getPayload();
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNote = mapper.readTree(payload);
+                String action = rootNote.get("action").asText();
+            }
         }
     }
 
+    public void parse(TextMessage textMessage){
+        try {
+            String payload = textMessage.getPayload();
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNote = mapper.readTree(payload);
+            String action = rootNote.get("action").asText();
+
+        }catch (IOException e){
+            log.error("Failed to parse request");
+            throw new AppException(ErrorCode.FAILED_TO_PROCESS_WS);
+        }
+    }
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);

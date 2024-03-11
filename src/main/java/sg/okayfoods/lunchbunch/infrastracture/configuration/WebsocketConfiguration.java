@@ -29,4 +29,5 @@ public class WebsocketConfiguration implements WebSocketConfigurer {
     public WebSocketHandler webSocketHandler() {
         return new WebsocketHandler(authorizationHandler, suggestionHandler);
     }
+
 }

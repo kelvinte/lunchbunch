@@ -5,4 +5,5 @@ import org.springframework.web.socket.WebSocketSession;
 public interface Command {
     void handle(WebSocketSession session);
 
+    public abstract boolean supports(String action);
 }
