@@ -7,6 +7,7 @@ import sg.okayfoods.lunchbunch.common.constant.UrlConstants;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanDetailedResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanRequestDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.SuggestionResponseDTO;
 
 @RestController
 @RequestMapping(UrlConstants.LUNCH_PLAN)
@@ -26,5 +27,10 @@ public class LunchPlanController {
     @GetMapping("/{uuid}")
     public LunchPlanDetailedResponseDTO get(@PathVariable String uuid){
         return lunchPlanService.get(uuid);
+    }
+
+    @GetMapping("/{uuid}/pick-winner")
+    public void endPickWinner(@PathVariable String uuid){
+        lunchPlanService.end(uuid);
     }
 }

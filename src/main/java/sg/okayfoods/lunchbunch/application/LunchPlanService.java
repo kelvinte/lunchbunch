@@ -70,6 +70,17 @@ public class LunchPlanService {
         return lunchMap;
     }
 
+    public void end(String uuid){
+        LunchPlan lunchPlan = lunchPlanRepository.findByUuid(uuid).orElseThrow(()->new AppException(ErrorCode.NOT_EXISTING));
+
+        if(lunchPlan.isEnded()){
+            throw new AppException(ErrorCode.LUNCH_PLAN_ENDED_ALREADY);
+        }
+
+        lunchPlan.setEnded(true);
+        lunchPlanRepository.save(lunchPlan);
+
+    }
 
     //    private Map<Long, Sinks.Many<SessionRestaurant>> sinkMap = new ConcurrentHashMap<>();
 //

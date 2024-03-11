@@ -31,6 +31,7 @@ CREATE TABLE `lunch_plan`
     `description`   varchar(255) NOT NULL,
     `ended` tinyint(1) default 0,
     `created_at`   datetime    default CURRENT_TIMESTAMP,
+    `version` bigint,
     FOREIGN KEY (initiated_by) REFERENCES app_user(id),
     INDEX(uuid)
 ) engine = INNODB;

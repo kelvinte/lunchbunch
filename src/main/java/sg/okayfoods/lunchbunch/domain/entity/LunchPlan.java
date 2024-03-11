@@ -39,4 +39,7 @@ public class LunchPlan {
     @Column(name="ended")
     private boolean ended;
 
+    @Version
+    private Long version;
+
 }

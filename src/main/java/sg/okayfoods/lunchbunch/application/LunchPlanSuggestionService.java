@@ -41,6 +41,10 @@ public class LunchPlanSuggestionService {
     public void create(String uuid, CreateSuggestionDTO requestDTO){
 
         LunchPlan lunchPlan = lunchPlanRepository.findByUuid(uuid).orElseThrow(()->new AppException(ErrorCode.NOT_EXISTING));
+
+        if(lunchPlan.isEnded()){
+            throw new AppException(ErrorCode.LUNCH_PLAN_ENDED_ALREADY);
+        }
         LunchPlanSuggestion lunchPlanSuggestion = LunchPlanSuggestion.builder()
                 .lunchPlan(lunchPlan)
                 .restaurantName(requestDTO.getRestaurant())
