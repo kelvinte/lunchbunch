@@ -1,4 +1,4 @@
-package sg.okayfoods.lunchbunch.infrastracture.adapter.handler;
+package sg.okayfoods.lunchbunch.infrastracture.adapter.handler.command;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
@@ -33,7 +33,7 @@ public class AuthorizationHandler {
     private String getAuthorization(String uri){
         String[] result = uri.split("auth=");
         if(result.length == 1){
-            throw new AppException(ErrorCode.WS_MISSING_AUTH_TOKEN);
+            throw new AppException(ErrorCode.FAILED_TO_PROCESS_WS);
         }
         return result[1];
     }
