@@ -29,8 +29,4 @@ public class LunchPlanController {
         return lunchPlanService.get(uuid);
     }
 
-    @GetMapping("/{uuid}/pick-winner")
-    public void endPickWinner(@PathVariable String uuid){
-        lunchPlanService.end(uuid);
-    }
 }

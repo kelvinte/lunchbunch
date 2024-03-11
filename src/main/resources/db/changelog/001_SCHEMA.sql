@@ -47,3 +47,13 @@ CREATE TABLE `lunch_plan_suggestion`
 
 ) engine = INNODB;
 
+
+CREATE TABLE `lunch_plan_winner`
+(
+    `id` bigint PRIMARY KEY  AUTO_INCREMENT,
+    `lunch_plan_id`      bigint      NOT NULL,
+    `lunch_plan_suggestion_id`      bigint      NOT NULL,
+    `datetime_pick` datetime ,
+    FOREIGN KEY (lunch_plan_id) REFERENCES lunch_plan(id),
+    FOREIGN KEY (lunch_plan_suggestion_id) REFERENCES lunch_plan_suggestion(id)
+)

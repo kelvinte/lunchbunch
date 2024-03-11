@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -41,5 +42,11 @@ public class LunchPlan {
 
     @Version
     private Long version;
+
+    @OneToMany(mappedBy = "lunchPlan")
+    private List<LunchPlanSuggestion> lunchPlanSuggestions;
+
+    @OneToOne(mappedBy = "lunchPlan")
+    private LunchPlanWinner lunchPlanWinner;
 
 }
