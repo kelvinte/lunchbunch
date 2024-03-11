@@ -36,4 +36,7 @@ public class LunchPlan {
     @Column(name="created_at")
     private LocalDateTime createdAt;
 
+    @Column(name="ended")
+    private boolean ended;
+
 }

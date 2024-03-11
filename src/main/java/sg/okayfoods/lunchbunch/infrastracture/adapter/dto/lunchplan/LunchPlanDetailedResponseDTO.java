@@ -15,5 +15,7 @@ public class LunchPlanDetailedResponseDTO {
     private String uuid;
     private String date;
     private String description;
+    private String initiator;
+    private boolean isOwner;
     private List<SuggestionResponseDTO> suggestions;
 }

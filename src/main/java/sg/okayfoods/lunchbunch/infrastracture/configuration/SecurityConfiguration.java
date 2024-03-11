@@ -2,6 +2,7 @@ package sg.okayfoods.lunchbunch.infrastracture.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,8 +39,8 @@ public class SecurityConfiguration {
                 )
                 .addFilterBefore(jwtTokenValidatorFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/register","/login").permitAll()
-//                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers(UrlConstants.REGISTER,UrlConstants.LOGIN).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/lunch-plan/**").permitAll()
                         .requestMatchers(UrlConstants.LUNCH_PLAN_WEBSOCKET).permitAll()
                         .anyRequest().authenticated()
                 );

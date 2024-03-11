@@ -1,6 +1,8 @@
 package sg.okayfoods.lunchbunch.application;
 
 import org.springframework.stereotype.Service;
+import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
+import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.common.util.DateTimeUtils;
 import sg.okayfoods.lunchbunch.domain.entity.AppUser;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
@@ -50,10 +52,22 @@ public class LunchPlanService {
     }
 
     public LunchPlanDetailedResponseDTO get(String uuid) {
-        var lunchPlan = lunchPlanRepository.findByUuid(uuid);
+        var lunchPlan = lunchPlanRepository.findByUuid(uuid).orElseThrow(()->new AppException(ErrorCode.NOT_EXISTING));
+
+        if(lunchPlan.isEnded()){
+            throw new AppException(ErrorCode.LUNCH_PLAN_ENDED_ALREADY);
+        }
+
         var lunchPlanSuggestions = lunchPlanSuggestionRepository.findByLunchPlanId(lunchPlan.getId());
 
-        return lunchPlanMapper.map(lunchPlan, lunchPlanSuggestions);
+        boolean isOwner = false;
+        var loggedInUser = loggedInUserService.getLoggedInUser();
+        if(loggedInUser!=null){
+            isOwner = loggedInUser.getId() .equals( lunchPlan.getInitiatedBy().getId());
+        }
+        var lunchMap = lunchPlanMapper.map(lunchPlan, lunchPlanSuggestions);
+        lunchMap.setOwner(isOwner);
+        return lunchMap;
     }
 
 

@@ -56,7 +56,6 @@ public class JWTTokenFilter  extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         String jwt = request.getHeader(Constants.JWT_HEADER);
         if (jwt == null ||!jwt.startsWith(Constants.BEARER)) {
             filterChain.doFilter(request, response);
@@ -64,33 +63,6 @@ public class JWTTokenFilter  extends OncePerRequestFilter {
         }
 
         jwt = jwt.substring(Constants.BEARER.length()).trim();
-
-//        SecretKey key = Keys.hmacShaKeyFor(
-//                jwtSecretKey.getBytes(StandardCharsets.UTF_8));
-//
-//        Claims claims = Jwts.parserBuilder()
-//                .setSigningKey(key)
-//                .build()
-//                .parseClaimsJws(jwt)
-//                .getBody();
-//        Long iat = claims.get(Constants.EXPIRY_CLAIM, Long.class);
-//        if(Instant.now().isAfter(Instant.ofEpochMilli(iat))){
-//            // expired
-//            invalidToken(response, ErrorCode.INVALID_TOKEN);
-//            return;
-//        }
-//
-//        String email = claims.get(Constants.SUB_CLAIM, String.class);
-//        String authorities = claims.get(Constants.AUTHORITY_CLAIM, String.class);
-//        Long userId = Long.valueOf(claims.get(Constants.USER_ID_CLAIM, String.class));
-//
-//        var appUser = appUserRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException(
-//                ErrorCode.INVALID_TOKEN.getMessage()));
-//
-//        if(!appUser.getId().equals(userId)){
-//            invalidToken(response, ErrorCode.INVALID_TOKEN);
-//            return;
-//        }
 
         try {
             AppUser user = authenticationService.validateToken(jwt);

@@ -2,6 +2,8 @@ package sg.okayfoods.lunchbunch.application;
 
 import org.springframework.stereotype.Service;
 import sg.okayfoods.lunchbunch.application.observer.SuggestionObserver;
+import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
+import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlanSuggestion;
 import sg.okayfoods.lunchbunch.domain.repository.LunchPlanRepository;
@@ -38,7 +40,7 @@ public class LunchPlanSuggestionService {
 
     public void create(String uuid, CreateSuggestionDTO requestDTO){
 
-        LunchPlan lunchPlan = lunchPlanRepository.findByUuid(uuid);
+        LunchPlan lunchPlan = lunchPlanRepository.findByUuid(uuid).orElseThrow(()->new AppException(ErrorCode.NOT_EXISTING));
         LunchPlanSuggestion lunchPlanSuggestion = LunchPlanSuggestion.builder()
                 .lunchPlan(lunchPlan)
                 .restaurantName(requestDTO.getRestaurant())

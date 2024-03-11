@@ -24,9 +24,10 @@ public interface LunchPlanMapper {
 
     @Mapping(target = "id", source = "lunchPlan.id")
     @Mapping(target = "uuid", source="lunchPlan.uuid")
-    @Mapping(target = "date", source="lunchPlan.uuid")
+    @Mapping(target = "date", source="lunchPlan.date")
     @Mapping(target = "description", source="lunchPlan.description")
     @Mapping(target = "suggestions", source="suggestions")
+    @Mapping(target="initiator", source = "lunchPlan.initiatedBy.name")
     LunchPlanDetailedResponseDTO map(LunchPlan lunchPlan, List<LunchPlanSuggestion> suggestions);
 
 
