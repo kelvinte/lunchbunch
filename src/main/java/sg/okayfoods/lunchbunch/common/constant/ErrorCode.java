@@ -12,7 +12,8 @@ public enum ErrorCode {
 
     UNKNOWN_AUTH_ERROR_OCCURRED("AUTH004", HttpStatus.FORBIDDEN, "Unknown AUTH Error occurred"),
     WS_MISSING_AUTH_TOKEN("WSAUTH001", HttpStatus.BAD_REQUEST, "Websocket URI missing authorization token"),
-    FAILED_TO_PROCESS_WS("WSAUTH002", HttpStatus.BAD_REQUEST, "Failed to process websocket"),
+    FAILED_TO_PARSE_WEBSOCKET_ACTION("WSAUTH002", HttpStatus.BAD_REQUEST, "Websocket Action was incorrect"),
+    FAILED_TO_PROCESS_WS("WSAUTH003", HttpStatus.BAD_REQUEST, "Failed to process websocket");
 
 
     ;

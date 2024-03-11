@@ -1,4 +1,4 @@
-package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming;
+package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.api;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;

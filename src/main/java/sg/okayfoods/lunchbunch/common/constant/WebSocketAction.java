@@ -1,5 +1,8 @@
 package sg.okayfoods.lunchbunch.common.constant;
 
 public enum WebSocketAction {
-    SUGGEST
+    SUGGEST,
+    RETRIEVE_SUGGESTIONS,
+
+    NOTIFY_ONE_SUGGESTION
 }

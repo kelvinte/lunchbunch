@@ -30,8 +30,10 @@ CREATE TABLE `lunch_plan`
     `date`    date    NOT NULL,
     `description`   varchar(255) NOT NULL,
     `created_at`   datetime    default CURRENT_TIMESTAMP,
-    FOREIGN KEY (initiated_by) REFERENCES app_user(id)
+    FOREIGN KEY (initiated_by) REFERENCES app_user(id),
+    INDEX(uuid)
 ) engine = INNODB;
+
 
 CREATE TABLE `lunch_plan_suggestion`
 (

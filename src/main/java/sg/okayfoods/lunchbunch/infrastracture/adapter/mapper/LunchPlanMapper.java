@@ -10,7 +10,7 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.LoginResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanDetailedResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanRequestDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanResponseDTO;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanSuggestionResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.SuggestionResponseDTO;
 
 import java.util.List;
 
@@ -29,6 +29,9 @@ public interface LunchPlanMapper {
     @Mapping(target = "suggestions", source="suggestions")
     LunchPlanDetailedResponseDTO map(LunchPlan lunchPlan, List<LunchPlanSuggestion> suggestions);
 
+
+    @Mapping(target = "restaurant", source = "restaurantName")
+    SuggestionResponseDTO map(LunchPlanSuggestion suggestion);
 
 
 }
