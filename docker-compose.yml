@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  lunchbunch-api:
+    build:
+      dockerfile: Dockerfile
+    image: lunchbunch-api:0.0.1
+    ports:
+      - "8080:8080"  # Replace 8000 with the port exposed by your application
+    depends_on:
+      - mysql
+    environment:
+      APP_MYSQL_DB: lunchbunch
+      APP_MYSQL_HOST: mysql
+      APP_MYSQL_PASSWORD: password
+      APP_MYSQL_USERNAME: root
+      APP_JWT_SECRET: VquHiRGQLFPdGSj7V9GmnCamgeOtAXuh
+      APP_JWT_EXPIRATION: 86400000
+    expose:
+      - 8080
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: lunchbunch
+      MYSQL_ROOT_PASSWORD: password
+    expose:
+      - 3306

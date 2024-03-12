@@ -25,7 +25,7 @@ public class LunchPlanController {
     }
 
     @GetMapping("/{uuid}")
-    public LunchPlanDetailedResponseDTO get(@PathVariable String uuid){
+    public LunchPlanDetailedResponseDTO get(@PathVariable("uuid") String uuid){
         return lunchPlanService.get(uuid);
     }
 

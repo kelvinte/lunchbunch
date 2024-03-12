@@ -15,7 +15,7 @@ public enum ErrorCode {
     FAILED_TO_PARSE_WEBSOCKET_ACTION("WSAUTH002", HttpStatus.BAD_REQUEST, "Websocket Action was incorrect"),
     FAILED_TO_PROCESS_WS("WSAUTH003", HttpStatus.BAD_REQUEST, "Failed to process websocket"),
     LUNCH_PLAN_ENDED_ALREADY("LP001", HttpStatus.BAD_REQUEST ,"Lunch Plan has already ended" ),
-    NOT_EXISTING("LP002",HttpStatus.BAD_REQUEST ,"Lunch plan not existing" );
+    NOT_EXISTING("LP002",HttpStatus.NOT_FOUND ,"Lunch plan not existing" );
 
 
     ;

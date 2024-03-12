@@ -1,4 +1,4 @@
-package sg.okayfoods.lunchbunch.application.observer;
+package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer;
 
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.CreateSuggestionDTO;
 

@@ -29,18 +29,15 @@ public class LunchPlanService {
 
 
     private LunchPlanRepository lunchPlanRepository;
-    private LunchPlanSuggestionRepository lunchPlanSuggestionRepository;
     private LunchPlanWinnerRepository lunchPlanWinnerRepository;
     private LunchPlanMapper lunchPlanMapper;
 
     private LoggedInUserService loggedInUserService;
     public LunchPlanService(LunchPlanRepository lunchPlanRepository,
-                            LunchPlanSuggestionRepository lunchPlanSuggestionRepository,
                             LunchPlanWinnerRepository lunchPlanWinnerRepository,
                             LunchPlanMapper lunchPlanMapper,
                             LoggedInUserService loggedInUserService) {
         this.lunchPlanRepository = lunchPlanRepository;
-        this.lunchPlanSuggestionRepository = lunchPlanSuggestionRepository;
         this.lunchPlanWinnerRepository = lunchPlanWinnerRepository;
         this.lunchPlanMapper = lunchPlanMapper;
         this.loggedInUserService = loggedInUserService;
@@ -64,9 +61,6 @@ public class LunchPlanService {
 
     public LunchPlanDetailedResponseDTO get(String uuid) {
         var lunchPlan = lunchPlanRepository.findByUuid(uuid).orElseThrow(()->new AppException(ErrorCode.NOT_EXISTING));
-
-        var lunchPlanSuggestions = lunchPlan.getLunchPlanSuggestions();
-        //  lunchPlanSuggestionRepository.findByLunchPlanId(lunchPlan.getId());
 
         boolean isOwner = false;
         var loggedInUser = loggedInUserService.getLoggedInUser();
@@ -108,46 +102,6 @@ public class LunchPlanService {
         return lunchPlanMapper.map(lunchPlanWinner);
 
     }
-
-    //    private Map<Long, Sinks.Many<SessionRestaurant>> sinkMap = new ConcurrentHashMap<>();
-//
-//
-//    private SessionRestaurantRepository sessionRestaurantRepository;
-//
-//    public SessionService(SessionRestaurantRepository sessionRestaurantRepository) {
-//        this.sessionRestaurantRepository = sessionRestaurantRepository;
-//    }
-//
-//
-//
-//    public Flux<SessionRestaurant> streamSessionRestaurant(Long sessionId){
-//        var sink = sinkMap.get(sessionId);
-//        if(sink==null){
-//            // query
-//            sink = Sinks.many().replay().all();
-//            sinkMap.put(sessionId, sink);
-//
-//            sessionRestaurantRepository.findBySessionId(sessionId)
-//                    .doOnNext(sink::tryEmitNext);
-//            // and emit
-//        }
-//        return sink.asFlux();
-//    }
-//    public Mono<SessionRestaurant> saveSessionRestaurant(SessionRestaurantRequest request){
-//        SessionRestaurant sessionRestaurant = SessionRestaurant.builder()
-//                .sessionId(1L)
-//                .restaurantName(request.getRestaurantName())
-//                .suggestedBy(1L)
-//                .build();
-//        return sessionRestaurantRepository.save(sessionRestaurant)
-//                .doOnNext(saved->{
-//                    var sessionId = saved.getSessionId();
-//                    var sink = sinkMap.getOrDefault(sessionId,Sinks.many().replay().all());
-//                    sinkMap.put(sessionId, sink);
-//                    sink.tryEmitNext(saved);
-//                });
-//    }
-
 
 
 

@@ -12,10 +12,6 @@ import java.util.Objects;
 @Setter
 public class LoggedInUser extends UsernamePasswordAuthenticationToken {
     private Long id;
-    public LoggedInUser(Long id, Object principal, Object credentials) {
-        super(principal, credentials);
-        this.id = id;
-    }
 
     public LoggedInUser(Long id, Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);

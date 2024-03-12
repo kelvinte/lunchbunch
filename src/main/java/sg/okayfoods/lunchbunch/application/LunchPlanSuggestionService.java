@@ -1,7 +1,7 @@
 package sg.okayfoods.lunchbunch.application;
 
 import org.springframework.stereotype.Service;
-import sg.okayfoods.lunchbunch.application.observer.SuggestionObserver;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
 import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
@@ -19,18 +19,14 @@ public class LunchPlanSuggestionService {
 
     private LunchPlanRepository lunchPlanRepository;
     private LunchPlanSuggestionRepository lunchPlanSuggestionRepository;
-    private List<SuggestionObserver> suggestionObservers;
-
 
     private LunchPlanMapper lunchPlanMapper;
     public LunchPlanSuggestionService(LunchPlanRepository lunchPlanRepository,
                                       LunchPlanSuggestionRepository lunchPlanSuggestionRepository,
-                                    LunchPlanMapper lunchPlanMapper,
-                                    List<SuggestionObserver> suggestionObservers) {
+                                    LunchPlanMapper lunchPlanMapper) {
         this.lunchPlanRepository = lunchPlanRepository;
         this.lunchPlanSuggestionRepository = lunchPlanSuggestionRepository;
         this.lunchPlanMapper = lunchPlanMapper;
-        this.suggestionObservers = suggestionObservers;
     }
 
     public List<SuggestionResponseDTO> retrieve(String uuid){
