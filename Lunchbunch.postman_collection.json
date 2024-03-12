@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "b5632441-7ab1-468b-9476-1397349178db",
+		"name": "Lunchbunch",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33156127",
+		"_collection_link": "https://vis-dev-team.postman.co/workspace/My-Workspace~bf55382b-a79a-4362-8c60-1587757d4de8/collection/33156127-b5632441-7ab1-468b-9476-1397349178db?action=share&source=collection_link&creator=33156127"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kelvinclarkte@gmail.com\",\r\n    \"password\":\"hello123\",\r\n    \"name\":\"Kelvin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kelvinclarkte@gmail.com\",\r\n    \"password\":\"hello123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lunch Request",
+			"item": [
+				{
+					"name": "Get Lunch Plan Detailed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxIiwiYXV0aG9yaXRpZXMiOiJVU0VSIiwic3ViIjoia2VsdmluY2xhcmt0ZUBnbWFpbC5jb20iLCJpYXQiOjE3MTAwODA3NzYsImV4cCI6MTcxMDE2NzE3NjAzOH0.OpSuUVLFXQwR1x7iqgr2KGLuUsH5fNG9wDW_NmUrwPs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lunch-plan/21dc69cdc1e5476198cd13e1c38b44ff",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lunch-plan",
+								"21dc69cdc1e5476198cd13e1c38b44ff"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lunch Plan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxIiwiYXV0aG9yaXRpZXMiOiJVU0VSIiwic3ViIjoia2VsdmluY2xhcmt0ZUBnbWFpbC5jb20iLCJpYXQiOjE3MTAwNzY2NTAsImV4cCI6MTcxMDE2MzA1MDY2OX0.CtEAxc7tPHdDgP-b8_kpQ0JJjJamMhXfLEMWcnyUq_w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\":\"2024-10-03\",\r\n    \"description\":\"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/lunch-plan",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lunch-plan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

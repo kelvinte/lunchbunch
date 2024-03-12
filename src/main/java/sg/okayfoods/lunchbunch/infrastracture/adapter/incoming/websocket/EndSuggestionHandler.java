@@ -10,22 +10,31 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.Retr
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.SuggestionResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketCommand;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.EndContestObserver;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 
 import java.util.List;
 
 @Service
 @Slf4j
-public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO, LunchPlanWinnerResponseDTO> {
+public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO, Void> {
 
     private final LunchPlanService lunchPlanService;
 
-    public EndSuggestionHandler(LunchPlanService lunchPlanService) {
+    private List<EndContestObserver> endContestObservers;
+    public EndSuggestionHandler(LunchPlanService lunchPlanService,List<EndContestObserver> endContestObservers) {
         this.lunchPlanService = lunchPlanService;
+        this.endContestObservers = endContestObservers;
     }
 
     @Override
-    public LunchPlanWinnerResponseDTO handle(WebSocketSession session, WebsocketDTO<RetrieveSuggestionDTO> message) {
-        return this.lunchPlanService.end(message.getUuid());
+    public Void handle(WebSocketSession session, WebsocketDTO<RetrieveSuggestionDTO> message) {
+        var result = this.lunchPlanService.end(message.getUuid());
+
+        for(var obs : endContestObservers){
+            obs.onEndContest(message.getUuid(),result);
+        }
+        return null;
     }
 
     @Override

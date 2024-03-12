@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.EndContestObserver;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.common.util.JsonUtils;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class WebsocketNotifier implements SuggestionObserver {
+public class WebsocketNotifier implements SuggestionObserver, EndContestObserver {
     /**
      * Map of lunch plan uuid with its corresponding users
      */
@@ -46,6 +48,23 @@ public class WebsocketNotifier implements SuggestionObserver {
         WebsocketResponseDTO<CreateSuggestionDTO> websockResp = new WebsocketResponseDTO<>();
         websockResp.setAction(WebSocketAction.NOTIFY_ONE_SUGGESTION.name());
         websockResp.setData(suggestionDTO);
+        String resp = JsonUtils.toJson(websockResp);
+
+        for (var session : list){
+            try {
+                session.sendMessage(new TextMessage(resp));
+            }catch (Exception e){
+                log.error("Failed to send: "+e);
+            }
+        }
+    }
+
+    @Override
+    public void onEndContest(String uuid, LunchPlanWinnerResponseDTO winnerDTO) {
+        var list = uuidWebSocketMap.get(uuid);
+        WebsocketResponseDTO<LunchPlanWinnerResponseDTO> websockResp = new WebsocketResponseDTO<>();
+        websockResp.setAction(WebSocketAction.END_SUGGESTION.name());
+        websockResp.setData(winnerDTO);
         String resp = JsonUtils.toJson(websockResp);
 
         for (var session : list){
