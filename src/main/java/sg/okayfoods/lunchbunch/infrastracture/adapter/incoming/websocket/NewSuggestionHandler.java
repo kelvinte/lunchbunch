@@ -2,8 +2,11 @@ package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 import org.springframework.web.socket.WebSocketSession;
 import sg.okayfoods.lunchbunch.application.LunchPlanSuggestionService;
+import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
+import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.common.util.JsonUtils;
@@ -19,15 +22,21 @@ public class NewSuggestionHandler extends WebsocketCommand<CreateSuggestionDTO, 
 
     private LunchPlanSuggestionService lunchPlanSuggestionService;
     private List<SuggestionObserver> suggestionObservers;
+    private Validator validator;
 
-    public NewSuggestionHandler(LunchPlanSuggestionService lunchPlanSuggestionService, List<SuggestionObserver> suggestionObservers) {
+    public NewSuggestionHandler(LunchPlanSuggestionService lunchPlanSuggestionService, List<SuggestionObserver> suggestionObservers, Validator validator) {
         this.lunchPlanSuggestionService = lunchPlanSuggestionService;
         this.suggestionObservers = suggestionObservers;
+        this.validator = validator;
     }
 
     @Override
     public Void handle(WebSocketSession session, WebsocketDTO<CreateSuggestionDTO> message) {
         log.info("Writing to suggestion handler {}", JsonUtils.toJson(message));
+        var validation = validator.validateObject(message.getData());
+        if(validation.hasErrors()) {
+            throw new AppException(ErrorCode.FAILED_TO_PROCESS_WS);
+        }
         this.lunchPlanSuggestionService.create(message.getUuid(), message.getData());
 
         for(var obs : suggestionObservers){

@@ -1,5 +1,6 @@
 package sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 @Getter
@@ -10,7 +11,9 @@ import lombok.*;
 public class CreateSuggestionDTO {
 
 
+    @NotEmpty
     private String restaurant;
 
+    @NotEmpty
     private String suggestedBy;
 }

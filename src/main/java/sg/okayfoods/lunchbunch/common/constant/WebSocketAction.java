@@ -5,5 +5,6 @@ public enum WebSocketAction {
     RETRIEVE_SUGGESTIONS,
 
     NOTIFY_ONE_SUGGESTION,
-    END_SUGGESTION
+    END_SUGGESTION,
+    ERROR
 }

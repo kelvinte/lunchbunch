@@ -82,14 +82,21 @@ public class WebsocketHandler extends TextWebSocketHandler {
                         .uuid(uuid)
                         .data(res)
                         .build();
-                var response = command.handleInternal(session, websocketDTO);
-
-                if(response!=null) {
+                try {
+                    var response = command.handleInternal(session, websocketDTO);
+                    if(response!=null) {
+                        WebsocketResponseDTO<Object> websockResp = new WebsocketResponseDTO<>();
+                        websockResp.setAction(action);
+                        websockResp.setData(response);
+                        session.sendMessage(new TextMessage(JsonUtils.toJson(websockResp)));
+                    }
+                }catch (AppException e){
                     WebsocketResponseDTO<Object> websockResp = new WebsocketResponseDTO<>();
-                    websockResp.setAction(action);
-                    websockResp.setData(response);
+                    websockResp.setAction(WebSocketAction.ERROR.name());
+                    websockResp.setData(e.getErrorCode().getMessage());
                     session.sendMessage(new TextMessage(JsonUtils.toJson(websockResp)));
                 }
+
             }
         }
     }
