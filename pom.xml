@@ -76,6 +76,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- message broker -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 		<!-- other tools -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>

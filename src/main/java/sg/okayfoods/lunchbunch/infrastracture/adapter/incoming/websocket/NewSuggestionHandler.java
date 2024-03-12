@@ -13,6 +13,7 @@ import sg.okayfoods.lunchbunch.common.util.JsonUtils;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.CreateSuggestionDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketCommand;
+import sg.okayfoods.lunchbunch.infrastracture.kafka.KafkaSender;
 
 import java.util.List;
 
@@ -24,10 +25,14 @@ public class NewSuggestionHandler extends WebsocketCommand<CreateSuggestionDTO, 
     private List<SuggestionObserver> suggestionObservers;
     private Validator validator;
 
-    public NewSuggestionHandler(LunchPlanSuggestionService lunchPlanSuggestionService, List<SuggestionObserver> suggestionObservers, Validator validator) {
+    private KafkaSender kafkaSender;
+    public NewSuggestionHandler(LunchPlanSuggestionService lunchPlanSuggestionService,
+                                KafkaSender kafkaSender,
+                                List<SuggestionObserver> suggestionObservers, Validator validator) {
         this.lunchPlanSuggestionService = lunchPlanSuggestionService;
         this.suggestionObservers = suggestionObservers;
         this.validator = validator;
+        this.kafkaSender = kafkaSender;
     }
 
     @Override
@@ -39,6 +44,7 @@ public class NewSuggestionHandler extends WebsocketCommand<CreateSuggestionDTO, 
         }
         this.lunchPlanSuggestionService.create(message.getUuid(), message.getData());
 
+        kafkaSender.send(JsonUtils.toJson(message));
         for(var obs : suggestionObservers){
             obs.onNewSuggestion(message.getUuid(), message.getData());
         }
