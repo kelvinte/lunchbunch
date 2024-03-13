@@ -9,12 +9,6 @@ spring:
     show-sql: true
   liquibase:
     change-log: classpath:db/changelog/changelog-master.xml
-  data:
-    redis:
-      host: redis-19078.c10.us-east-1-3.ec2.cloud.redislabs.com
-      port: 19078
-      username: default
-      password: fx3386n4qleQFbaxfHg59tnykphOrgSv
 
 
 jwt:

@@ -5,7 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.RedisSender;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.EndContestObserver;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.RedisPublisher;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.RedisSubscriber;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.common.util.JsonUtils;
@@ -13,18 +16,24 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.Websock
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.CreateSuggestionDTO;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class WebsocketNotifier implements SuggestionObserver, EndContestObserver {
+public class WebsocketNotifier implements SuggestionObserver, EndContestObserver, RedisPublisher, RedisSubscriber {
     /**
      * Map of lunch plan uuid with its corresponding users
      */
     private final Map<String, ConcurrentLinkedQueue<WebSocketSession>> uuidWebSocketMap = new ConcurrentHashMap<>();
 
+    private RedisSender redisSender;
+
+    public WebsocketNotifier(RedisSender redisSender){
+        this.redisSender = redisSender;
+    }
 
     public void add(String uuid, WebSocketSession session){
         var list = uuidWebSocketMap.getOrDefault(uuid, new ConcurrentLinkedQueue<>());
@@ -45,16 +54,18 @@ public class WebsocketNotifier implements SuggestionObserver, EndContestObserver
     public void onNewSuggestion(String uuid, CreateSuggestionDTO suggestionDTO) {
         // notify
         var list = uuidWebSocketMap.get(uuid);
-        WebsocketResponseDTO<CreateSuggestionDTO> websockResp = new WebsocketResponseDTO<>();
-        websockResp.setAction(WebSocketAction.NOTIFY_ONE_SUGGESTION.name());
-        websockResp.setData(suggestionDTO);
-        String resp = JsonUtils.toJson(websockResp);
+        if(list!=null) {
+            WebsocketResponseDTO<CreateSuggestionDTO> websockResp = new WebsocketResponseDTO<>();
+            websockResp.setAction(WebSocketAction.NOTIFY_ONE_SUGGESTION.name());
+            websockResp.setData(suggestionDTO);
+            String resp = JsonUtils.toJson(websockResp);
 
-        for (var session : list){
-            try {
-                session.sendMessage(new TextMessage(resp));
-            }catch (Exception e){
-                log.error("Failed to send: "+e);
+            for (var session : list) {
+                try {
+                    session.sendMessage(new TextMessage(resp));
+                } catch (Exception e) {
+                    log.error("Failed to send: " + e);
+                }
             }
         }
     }
@@ -62,17 +73,29 @@ public class WebsocketNotifier implements SuggestionObserver, EndContestObserver
     @Override
     public void onEndContest(String uuid, LunchPlanWinnerResponseDTO winnerDTO) {
         var list = uuidWebSocketMap.get(uuid);
-        WebsocketResponseDTO<LunchPlanWinnerResponseDTO> websockResp = new WebsocketResponseDTO<>();
-        websockResp.setAction(WebSocketAction.END_SUGGESTION.name());
-        websockResp.setData(winnerDTO);
-        String resp = JsonUtils.toJson(websockResp);
+        if(list!=null) {
+            WebsocketResponseDTO<LunchPlanWinnerResponseDTO> websockResp = new WebsocketResponseDTO<>();
+            websockResp.setAction(WebSocketAction.END_SUGGESTION.name());
+            websockResp.setData(winnerDTO);
+            String resp = JsonUtils.toJson(websockResp);
 
-        for (var session : list){
-            try {
-                session.sendMessage(new TextMessage(resp));
-            }catch (Exception e){
-                log.error("Failed to send: "+e);
+            for (var session : list) {
+                try {
+                    session.sendMessage(new TextMessage(resp));
+                } catch (Exception e) {
+                    log.error("Failed to send: " + e);
+                }
             }
         }
+    }
+
+    @Override
+    public void redisSend(String lunchPLanUuid, Object object) {
+        this.redisSender.publish(lunchPLanUuid, object);
+    }
+
+    @Override
+    public void onRedisReceive(String uuid, Object data) {
+
     }
 }

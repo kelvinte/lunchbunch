@@ -1,5 +1,6 @@
 package sg.okayfoods.lunchbunch.infrastracture.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -11,13 +12,15 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.InstanceReceiver;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.RedisReceiver;
 
 import java.time.Duration;
 
 @Configuration
 @EnableRedisRepositories
 public class RedisConfiguration {
+    @Autowired
+    RedisReceiver redisReceiver;
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
@@ -44,7 +47,7 @@ public class RedisConfiguration {
     }
     @Bean
     MessageListenerAdapter messageListener() {
-        return new MessageListenerAdapter(new InstanceReceiver());
+        return new MessageListenerAdapter(redisReceiver);
     }
 
     @Bean
