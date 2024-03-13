@@ -7,6 +7,7 @@ import org.springframework.web.socket.WebSocketSession;
 import sg.okayfoods.lunchbunch.application.LunchPlanSuggestionService;
 import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
 import sg.okayfoods.lunchbunch.common.exception.AppException;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core.RedisSender;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.common.util.JsonUtils;
@@ -22,12 +23,18 @@ public class NewSuggestionHandler extends WebsocketCommand<CreateSuggestionDTO, 
 
     private LunchPlanSuggestionService lunchPlanSuggestionService;
     private List<SuggestionObserver> suggestionObservers;
-    private Validator validator;
 
-    public NewSuggestionHandler(LunchPlanSuggestionService lunchPlanSuggestionService, List<SuggestionObserver> suggestionObservers, Validator validator) {
+    private Validator validator;
+    private RedisSender redisSender;
+
+    public NewSuggestionHandler(LunchPlanSuggestionService lunchPlanSuggestionService,
+                                List<SuggestionObserver> suggestionObservers,
+                                Validator validator,
+                                RedisSender redisSender) {
         this.lunchPlanSuggestionService = lunchPlanSuggestionService;
         this.suggestionObservers = suggestionObservers;
         this.validator = validator;
+        this.redisSender = redisSender;
     }
 
     @Override
@@ -43,6 +50,7 @@ public class NewSuggestionHandler extends WebsocketCommand<CreateSuggestionDTO, 
             obs.onNewSuggestion(message.getUuid(), message.getData());
         }
 
+        redisSender.publish(message);
         return null;
     }
 

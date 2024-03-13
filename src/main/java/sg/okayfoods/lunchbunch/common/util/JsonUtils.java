@@ -3,6 +3,7 @@ package sg.okayfoods.lunchbunch.common.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 
 public class JsonUtils {
 
@@ -22,5 +23,11 @@ public class JsonUtils {
         }catch (IOException e){
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    public static <T> T toObject(Object obj , Class<T> clazz){
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(obj, clazz);
+
     }
 }
