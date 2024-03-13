@@ -10,7 +10,6 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.redis.RedisDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketDTO;
 
 @Service
-@EnableScheduling
 public class RedisSender {
 
     RedisTemplate<String, String> redisTemplate;

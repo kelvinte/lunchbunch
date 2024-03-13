@@ -65,27 +65,28 @@ public class WebsocketHandler extends TextWebSocketHandler {
         if(session.isOpen()) {
             String uuid = getSuggestionUUID(session.getUri());
             if(!StringUtils.isEmpty(uuid)){
-                String payload = message.getPayload();
-                JsonNode rootNode = objectMapper.readTree(payload);
-                String action = rootNode.get("action").asText();
-
-                WebSocketAction webSocketAction = WebSocketAction.valueOf(action);
-                WebsocketCommand command = commandHashMap.get(webSocketAction);
-                if(command == null){
-                    throw new AppException(ErrorCode.FAILED_TO_PARSE_WEBSOCKET_ACTION);
-                }
-                Object res = null;
-                if(rootNode.has("data")) {
-                    String data = rootNode.get("data").toString();
-                    res = JsonUtils.toObject(data,  command.getMethodClass());
-                }
-
-                WebsocketDTO websocketDTO = WebsocketDTO.builder()
-                        .action(webSocketAction)
-                        .uuid(uuid)
-                        .data(res)
-                        .build();
                 try {
+                    String payload = message.getPayload();
+                    JsonNode rootNode = objectMapper.readTree(payload);
+                    String action = rootNode.get("action").asText();
+
+                    WebSocketAction webSocketAction = WebSocketAction.valueOf(action);
+                    WebsocketCommand command = commandHashMap.get(webSocketAction);
+                    if(command == null){
+                        throw new AppException(ErrorCode.FAILED_TO_PARSE_WEBSOCKET_ACTION);
+                    }
+                    Object res = null;
+                    if(rootNode.has("data")) {
+                        String data = rootNode.get("data").toString();
+                        res = JsonUtils.toObject(data,  command.getMethodClass());
+                    }
+
+                    WebsocketDTO websocketDTO = WebsocketDTO.builder()
+                            .action(webSocketAction)
+                            .uuid(uuid)
+                            .data(res)
+                            .build();
+
                     var response = command.handleInternal(session, websocketDTO);
                     if(response!=null) {
                         WebsocketResponseDTO<Object> websockResp = new WebsocketResponseDTO<>();
@@ -114,6 +115,9 @@ public class WebsocketHandler extends TextWebSocketHandler {
     private String getSuggestionUUID(URI uri){
         String query = uri.getQuery();
 
+        if(query == null){
+            throw new AppException(ErrorCode.FAILED_TO_PROCESS_WS);
+        }
         String parameter = StringUtils.substringBefore(query, "=");
         if(!parameter.equals( VALID_QUERY_PARAMS)){
             throw new AppException(ErrorCode.FAILED_TO_PROCESS_WS);
