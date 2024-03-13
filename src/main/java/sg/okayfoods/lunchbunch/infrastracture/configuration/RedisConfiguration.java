@@ -1,6 +1,7 @@
 package sg.okayfoods.lunchbunch.infrastracture.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,7 +13,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.RedisReceiver;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core.RedisReceiver;
 
 import java.time.Duration;
 
@@ -20,7 +21,18 @@ import java.time.Duration;
 @EnableRedisRepositories
 public class RedisConfiguration {
     @Autowired
-    RedisReceiver redisReceiver;
+    private RedisReceiver redisReceiver;
+    @Value("${redis.host}")
+    private String redisHost;
+    @Value("${redis.port}")
+    private Integer redisPort;
+    @Value("${redis.username}")
+    private String redisUsername;
+    @Value("${redis.password}")
+    private String redisPassword;
+    @Value("${redis.topic}")
+    private String redisTopic;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
@@ -28,9 +40,9 @@ public class RedisConfiguration {
                 .shutdownTimeout(Duration.ZERO)
                 .build();
         var redis = new RedisStandaloneConfiguration(
-                "redis-19078.c10.us-east-1-3.ec2.cloud.redislabs.com", 19078);
-        redis.setUsername("default");
-        redis.setPassword("fx3386n4qleQFbaxfHg59tnykphOrgSv");
+                redisHost, redisPort);
+        redis.setUsername(redisUsername);
+        redis.setPassword(redisPassword);
         return new LettuceConnectionFactory(redis, clientConfig);
     }
 
@@ -43,7 +55,7 @@ public class RedisConfiguration {
 
     @Bean
     public ChannelTopic topic() {
-        return new ChannelTopic("lunchbunch");
+        return new ChannelTopic(redisTopic);
     }
     @Bean
     MessageListenerAdapter messageListener() {
