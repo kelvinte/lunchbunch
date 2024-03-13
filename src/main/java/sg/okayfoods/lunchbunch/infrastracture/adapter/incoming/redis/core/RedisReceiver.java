@@ -26,7 +26,7 @@ public class RedisReceiver implements MessageListener {
 
         RedisDTO redisDTO = JsonUtils.toObject(receivedMessage, RedisDTO.class);
 
-        if(redisInstanceId.equals(redisDTO.getRedisId())){
+        if(!redisInstanceId.equals(redisDTO.getRedisId())){
             // good to send
             for(var sub : redisSubscribers){
                 sub.onRedisReceive(redisDTO.getData());

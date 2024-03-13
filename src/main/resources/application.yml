@@ -10,7 +10,6 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog-master.xml
 
-
 jwt:
   secret: ${APP_JWT_SECRET}
   expiration: ${APP_JWT_EXPIRATION}

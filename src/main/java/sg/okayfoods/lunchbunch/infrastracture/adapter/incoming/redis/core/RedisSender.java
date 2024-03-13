@@ -29,6 +29,6 @@ public class RedisSender {
                 .redisId(redisInstanceId)
                 .data(data)
                 .build();
-        redisTemplate.convertAndSend(topic.getTopic(), JsonUtils.toJson(redisDTO).getBytes());
+        redisTemplate.convertAndSend(topic.getTopic(), JsonUtils.toJson(redisDTO));
     }
 }

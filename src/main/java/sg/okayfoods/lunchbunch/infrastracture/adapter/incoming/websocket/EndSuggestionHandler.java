@@ -7,6 +7,7 @@ import sg.okayfoods.lunchbunch.application.LunchPlanService;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.RetrieveSuggestionDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core.RedisSender;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketCommand;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.EndContestObserver;
@@ -36,7 +37,11 @@ public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO
             obs.onEndContest(message.getUuid(),result);
         }
 
-        redisSender.publish(message);
+        WebsocketDTO<LunchPlanWinnerResponseDTO> winnerResponseDTOWebsocketDTO = new WebsocketDTO<>();
+        winnerResponseDTOWebsocketDTO.setUuid(message.getUuid());
+        winnerResponseDTOWebsocketDTO.setData(result);
+        winnerResponseDTOWebsocketDTO.setAction(message.getAction());
+        redisSender.publish(winnerResponseDTOWebsocketDTO);
         return null;
     }
 

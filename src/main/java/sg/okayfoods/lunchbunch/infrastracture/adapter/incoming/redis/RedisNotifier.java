@@ -21,7 +21,7 @@ public class RedisNotifier implements RedisSubscriber {
     @Override
     public void onRedisReceive(WebsocketDTO websocketDTO) {
         switch (websocketDTO.getAction()){
-            case NOTIFY_ONE_SUGGESTION -> {
+            case SUGGEST -> {
                 broadcaster.onNewSuggestion(websocketDTO.getUuid(), JsonUtils.toObject(websocketDTO.getData(), CreateSuggestionDTO.class));
             }
             case END_SUGGESTION -> {
