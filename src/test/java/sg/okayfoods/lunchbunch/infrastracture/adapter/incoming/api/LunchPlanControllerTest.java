@@ -10,15 +10,22 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import sg.okayfoods.lunchbunch.application.AuthenticationService;
+import sg.okayfoods.lunchbunch.common.constant.UserStatus;
+import sg.okayfoods.lunchbunch.domain.entity.AppRole;
 import sg.okayfoods.lunchbunch.domain.entity.AppUser;
+import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
 import sg.okayfoods.lunchbunch.domain.repository.AppUserRepository;
+import sg.okayfoods.lunchbunch.domain.repository.LunchPlanRepository;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.LoginRequest;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.LoginResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.RegistrationRequest;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.GenericResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanRequestDTO;
+import sg.okayfoods.lunchbunch.util.ContainerUtils;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -26,51 +33,64 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LunchPlanControllerTest {
-
-    static MySQLContainer<?> mysql = new MySQLContainer<>(
-            "mysql:8.3"
-    );
-    @Autowired
-    AuthenticationService authenticationService;
-
-    private static String lunchPlanUuid = "";
-
-    @LocalServerPort
-    private Integer port;
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysql::getJdbcUrl);
-        registry.add("spring.datasource.username", mysql::getUsername);
-        registry.add("spring.datasource.password", mysql::getPassword);
-    }
 
     @BeforeAll
     static void beforeAll(){
-        mysql.start();
+        ContainerUtils.startContainers();
     }
     @AfterAll
     static void afterAll() {
-        mysql.stop();
+        ContainerUtils.stopContainer();
     }
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        ContainerUtils.setPropertySource(registry);
+    }
+
+    @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Autowired
+    private LunchPlanRepository lunchPlanRepository;
+
+    @LocalServerPort
+    private Integer port;
+
+    private String userEmail = "test@test.com";
+    private String userPassword = "hello123";
+    private String userEncryptedPassword="$2a$10$tvBKf7WUdSeXkUlQ.WO5EeBY6t9uKU59CDMxxdF2CmGdifiMyTV9.";
+
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
+        registerUser();
+    }
+
+    @AfterEach
+    void after(){
+        deleteAll();
     }
 
     void registerUser(){
-        RegistrationRequest registrationRequest = new RegistrationRequest();
-        registrationRequest.setEmail("test@test.com");
-        registrationRequest.setPassword("password");
-        registrationRequest.setName("test");
-        authenticationService.register(registrationRequest);
+        AppUser existingUser = AppUser.builder()
+                .email(userEmail)
+                .name("existing")
+                .password(userEncryptedPassword) //hello123
+                .status(UserStatus.ACTIVE)
+                .appRole(AppRole.builder().id(1).build())
+                .build();
+        appUserRepository.save(existingUser);
+    }
+    void deleteAll(){
+        lunchPlanRepository.deleteAll();
+        appUserRepository.deleteAll();
     }
     String getAccessToken(){
         var response = given()
                 .contentType(ContentType.JSON)
                 .body(LoginRequest.builder()
-                        .email("test@test.com").password("password")
+                        .email(userEmail).password(userPassword)
                         .build())
                 .when()
                 .post("/login")
@@ -83,10 +103,8 @@ class LunchPlanControllerTest {
         return dataResp.get("accessToken");
     }
     @Test
-    @Order(1)
     void validRequest_createLunchPlan_responseOkay() {
 
-        registerUser();
         String accessToken = getAccessToken();
         LunchPlanRequestDTO lunchPlanRequestDTO = LunchPlanRequestDTO.builder()
                 .date("2024-03-12")
@@ -102,25 +120,50 @@ class LunchPlanControllerTest {
         var response = resp.as(GenericResponse.class);
         assertEquals(200, response.status());
         LinkedHashMap<String,String> dataResp = ((LinkedHashMap<String,String>) response.data());
-        lunchPlanUuid = dataResp.get("uuid");
+        String lunchPlanUuid = dataResp.get("uuid");
+        var lunchPlan =lunchPlanRepository.findByUuid(lunchPlanUuid);
+        assertTrue(lunchPlan.isPresent());
+        assertEquals("Birthday Celebration", lunchPlan.get().getDescription());
+        assertEquals(LocalDate.parse("2024-03-12"), lunchPlan.get().getDate());
+
     }
 
     @Test
-    @Order(2)
     void validRequest_getLunch_responseOkay() {
+
+        var user = appUserRepository.findByEmail(userEmail);
+        LocalDate localDate = LocalDate.now();
+        String uuid = UUID.randomUUID().toString();
+        LunchPlan lunchPlan = LunchPlan.builder()
+                .uuid(uuid)
+                .description("Test")
+                .date(localDate)
+                .initiatedBy(user.get())
+                .build();
+
+        lunchPlanRepository.save(lunchPlan);
+
         String accessToken = getAccessToken();
 
         given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer "+accessToken)
                 .when()
-                .get("/lunch-plan/"+lunchPlanUuid)
+                .get("/lunch-plan/"+uuid)
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .assertThat().
+                body(  "success", equalTo(true),
+                        "status", equalTo(200),
+                        "title", equalTo("Request Processed successfully"),
+                        "data.id", equalTo(lunchPlan.getId().toString()),
+                        "data.uuid", equalTo(uuid),
+                        "data.description",equalTo("Test") // Assert access token is not null
+                );
     }
     @Test
-    @Order(2)
     void requestNotExisting_getLunch_response404() {
+
         String accessToken = getAccessToken();
 
         given()
@@ -131,4 +174,7 @@ class LunchPlanControllerTest {
                 .then()
                 .statusCode(404);
     }
+
+
+
 }

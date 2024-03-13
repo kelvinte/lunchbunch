@@ -6,7 +6,7 @@ import org.springframework.web.socket.WebSocketSession;
 import sg.okayfoods.lunchbunch.application.LunchPlanService;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketDTO;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.RetrieveSuggestionDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.EndSuggestionDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core.RedisSender;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketCommand;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO, Void> {
+public class EndSuggestionHandler extends WebsocketCommand<EndSuggestionDTO, Void> {
 
     private final LunchPlanService lunchPlanService;
 
@@ -30,7 +30,7 @@ public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO
     }
 
     @Override
-    public Void handle(WebSocketSession session, WebsocketDTO<RetrieveSuggestionDTO> message) {
+    public Void handle(WebSocketSession session, WebsocketDTO<EndSuggestionDTO> message) {
         var result = this.lunchPlanService.end(message.getUuid());
 
         for(var obs : endContestObservers){

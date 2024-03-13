@@ -47,8 +47,13 @@ public class SpecificExceptionHandler {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         StringBuilder errors = new StringBuilder();
         for (FieldError fieldError : fieldErrors) {
-            errors.append(fieldError.getField() + ": " + fieldError.getDefaultMessage());
+            errors.append(fieldError.getField())
+                    .append(": ")
+                    .append(fieldError.getDefaultMessage())
+                    .append(",");
         }
+
+        errors.delete(errors.length()-1,errors.length());
         return new GenericResponse(errors.toString(),null,
                 HttpStatus.BAD_REQUEST.value(), false);
     }
