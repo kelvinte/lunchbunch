@@ -7,11 +7,9 @@ import sg.okayfoods.lunchbunch.application.LunchPlanService;
 import sg.okayfoods.lunchbunch.common.constant.WebSocketAction;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.RetrieveSuggestionDTO;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.SuggestionResponseDTO;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core.RedisSender;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketCommand;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.EndContestObserver;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.observer.SuggestionObserver;
 
 import java.util.List;
 
@@ -22,9 +20,12 @@ public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO
     private final LunchPlanService lunchPlanService;
 
     private List<EndContestObserver> endContestObservers;
-    public EndSuggestionHandler(LunchPlanService lunchPlanService,List<EndContestObserver> endContestObservers) {
+    private RedisSender redisSender;
+    public EndSuggestionHandler(LunchPlanService lunchPlanService,List<EndContestObserver> endContestObservers,
+                                RedisSender redisSender) {
         this.lunchPlanService = lunchPlanService;
         this.endContestObservers = endContestObservers;
+        this.redisSender = redisSender;
     }
 
     @Override
@@ -34,6 +35,8 @@ public class EndSuggestionHandler extends WebsocketCommand<RetrieveSuggestionDTO
         for(var obs : endContestObservers){
             obs.onEndContest(message.getUuid(),result);
         }
+
+        redisSender.publish(message);
         return null;
     }
 

@@ -2,6 +2,7 @@ package sg.okayfoods.lunchbunch.infrastracture.adapter.dto.redis;
 
 
 import lombok.*;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketDTO;
 
 @Setter
 @Getter
@@ -10,6 +11,5 @@ import lombok.*;
 @NoArgsConstructor
 public class RedisDTO {
     private String redisId;
-    private String uuid;
-    private Object data;
+    private WebsocketDTO data;
 }

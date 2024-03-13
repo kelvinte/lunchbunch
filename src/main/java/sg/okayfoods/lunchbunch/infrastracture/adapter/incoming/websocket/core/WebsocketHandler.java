@@ -28,11 +28,12 @@ public class WebsocketHandler extends TextWebSocketHandler {
     public static final String VALID_QUERY_PARAMS = "suggest";
 
     private HashMap<WebSocketAction, WebsocketCommand> commandHashMap;
-    private WebsocketNotifier websocketNotifier;
 
-    public WebsocketHandler(List<? extends WebsocketCommand> handlers, WebsocketNotifier websocketNotifier) {
+    private WebsocketUsers websocketUsers;
 
-        this.websocketNotifier = websocketNotifier;
+    public WebsocketHandler(List<? extends WebsocketCommand> handlers, WebsocketUsers websocketUsers) {
+
+        this.websocketUsers = websocketUsers;
         commandHashMap = new HashMap<>();
 
         for(var actionEnum : WebSocketAction.values()){
@@ -52,7 +53,7 @@ public class WebsocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         try {
             String uuid = getSuggestionUUID(session.getUri());
-            this.websocketNotifier.add(uuid, session);
+            this.websocketUsers.add(uuid,session);
         }catch (AppException e){
             session.close(CloseStatus.NOT_ACCEPTABLE);
         }
@@ -68,7 +69,8 @@ public class WebsocketHandler extends TextWebSocketHandler {
                 JsonNode rootNode = objectMapper.readTree(payload);
                 String action = rootNode.get("action").asText();
 
-                WebsocketCommand command = commandHashMap.get(WebSocketAction.valueOf(action));
+                WebSocketAction webSocketAction = WebSocketAction.valueOf(action);
+                WebsocketCommand command = commandHashMap.get(webSocketAction);
                 if(command == null){
                     throw new AppException(ErrorCode.FAILED_TO_PARSE_WEBSOCKET_ACTION);
                 }
@@ -79,6 +81,7 @@ public class WebsocketHandler extends TextWebSocketHandler {
                 }
 
                 WebsocketDTO websocketDTO = WebsocketDTO.builder()
+                        .action(webSocketAction)
                         .uuid(uuid)
                         .data(res)
                         .build();
@@ -105,7 +108,7 @@ public class WebsocketHandler extends TextWebSocketHandler {
         super.afterConnectionClosed(session, status);
         session.close();
         String uuid = getSuggestionUUID(session.getUri());
-        this.websocketNotifier.remove(uuid, session);
+        this.websocketUsers.remove(uuid,session);
     }
 
     private String getSuggestionUUID(URI uri){

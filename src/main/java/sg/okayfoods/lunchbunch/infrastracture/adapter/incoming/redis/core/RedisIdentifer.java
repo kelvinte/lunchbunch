@@ -1,4 +1,4 @@
-package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis;
+package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
