@@ -21,6 +21,8 @@ public interface LunchPlanMapper {
     @Mapping(target = "uuid", expression = "java(java.util.UUID.randomUUID().toString().replace(\"-\",\"\"))")
     LunchPlan map(LunchPlanRequestDTO lunchPlanRequestDTO);
 
+    @Mapping(target = "winner", source="lunchPlan.lunchPlanWinner")
+    @Mapping(target = "createdAt",source = "createdAt")
 
     LunchPlanResponseDTO map(LunchPlan lunchPlan);
 

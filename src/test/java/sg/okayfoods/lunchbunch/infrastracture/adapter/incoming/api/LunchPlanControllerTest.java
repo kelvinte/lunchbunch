@@ -20,10 +20,13 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.LoginRequest;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.LoginResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth.RegistrationRequest;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.GenericResponse;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.PaginatedResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanRequestDTO;
 import sg.okayfoods.lunchbunch.util.ContainerUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -175,6 +178,45 @@ class LunchPlanControllerTest {
                 .statusCode(404);
     }
 
+
+    @Test
+    void haveLunchPlan_getLunchPLan_returnPaginatedLunchPlan(){
+        var user = appUserRepository.findByEmail(userEmail);
+        LocalDate localDate = LocalDate.now();
+        String uuid = UUID.randomUUID().toString();
+        for(int i = 0 ; i < 20 ; i ++) {
+            LunchPlan lunchPlan = LunchPlan.builder()
+                    .uuid(uuid)
+                    .description("Test")
+                    .date(localDate)
+                    .initiatedBy(user.get())
+                    .build();
+
+            lunchPlanRepository.save(lunchPlan);
+        }
+
+        String accessToken = getAccessToken();
+        var response = given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer "+accessToken)
+                .when()
+                .get("/lunch-plan?page=1")
+                .then()
+                .statusCode(200)
+                .extract();
+
+        var genResp = response.as(GenericResponse.class);
+        assertEquals("Request Processed successfully", genResp.title());
+        assertEquals(200, genResp.status());
+        var data = (LinkedHashMap)genResp.data();
+        assertEquals(20,data.get("totalItems"));
+        assertEquals(2, data.get("totalPage"));
+        assertEquals(10, data.get("size"));
+        assertEquals(1, data.get("page"));
+
+        var result = (ArrayList<LinkedHashMap>) data.get("result");
+        assertEquals("Test", result.get(0).get("description"));
+    }
 
 
 }

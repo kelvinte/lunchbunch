@@ -1,5 +1,7 @@
 package sg.okayfoods.lunchbunch.application;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
@@ -9,14 +11,13 @@ import sg.okayfoods.lunchbunch.domain.entity.AppUser;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlanWinner;
 import sg.okayfoods.lunchbunch.domain.repository.LunchPlanRepository;
-import sg.okayfoods.lunchbunch.domain.repository.LunchPlanSuggestionRepository;
 import sg.okayfoods.lunchbunch.domain.repository.LunchPlanWinnerRepository;
 import sg.okayfoods.lunchbunch.domain.user.LoggedInUser;
+import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.PaginatedResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanDetailedResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanRequestDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.SuggestionResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.mapper.LunchPlanMapper;
 
 import java.time.LocalDate;
@@ -53,6 +54,7 @@ public class LunchPlanService {
                 .description(request.getDescription())
                 .date(DateTimeUtils.convert(request.getDate()))
                 .initiatedBy(appUser)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         LunchPlan result = lunchPlanRepository.save(lunchPlan);
@@ -104,5 +106,18 @@ public class LunchPlanService {
     }
 
 
+    public PaginatedResponse<LunchPlanResponseDTO> getAll(int page , int size) {
+        LoggedInUser loggedInUser = loggedInUserService.getLoggedInUser();
+        Page<LunchPlan> lunchPlanPage = lunchPlanRepository.findByInitiatedBy(loggedInUser.getId(), PageRequest.of(page, size));
+        var list = lunchPlanPage.stream().map(lunchPlanMapper::map).toList();
+        return PaginatedResponse.<LunchPlanResponseDTO>builder()
+                .result(list)
+                .page(lunchPlanPage.getNumber())
+                .size(lunchPlanPage.getSize())
+                .totalPage(lunchPlanPage.getTotalPages())
+                .totalItems(lunchPlanPage.getTotalElements())
+                .build();
 
+
+    }
 }
