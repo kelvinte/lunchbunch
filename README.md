@@ -1,9 +1,3 @@
-
-1.
-2. mvn clean install
-2. docker-compose up
-3. docker-compose -f conduktor-compose.yml up
-4.
 # How to run
 * The application is written using Java 17 and Spring boot 3.2.3
 * Database Migration is in place using liquibase
