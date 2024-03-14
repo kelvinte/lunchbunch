@@ -76,26 +76,19 @@
 					"name": "Get Lunch Plan Detailed",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxIiwiYXV0aG9yaXRpZXMiOiJVU0VSIiwic3ViIjoia2VsdmluY2xhcmt0ZUBnbWFpbC5jb20iLCJpYXQiOjE3MTAwODA3NzYsImV4cCI6MTcxMDE2NzE3NjAzOH0.OpSuUVLFXQwR1x7iqgr2KGLuUsH5fNG9wDW_NmUrwPs",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/lunch-plan/21dc69cdc1e5476198cd13e1c38b44ff",
+							"raw": "localhost:8080/lunch-plan/b4040d01fa7042a4b821dfd89f45a5da",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"lunch-plan",
-								"21dc69cdc1e5476198cd13e1c38b44ff"
+								"b4040d01fa7042a4b821dfd89f45a5da"
 							]
 						}
 					},
@@ -133,6 +126,44 @@
 							"port": "8080",
 							"path": [
 								"lunch-plan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All My Lunch Plan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIyIiwiYXV0aG9yaXRpZXMiOiJVU0VSIiwic3ViIjoia2VsdmluY2xhcmt0ZTFAZ21haWwuY29tIiwiaWF0IjoxNzEwMzc5Mjc3LCJleHAiOjE3MTA0NjU2Nzc0NjF9.DOfM33XncVhFUj7EW6VdjyC-6PUfZx2Z2uUQhK8VFhU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/lunch-plan?page=0&size=20",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"lunch-plan"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
 							]
 						}
 					},
