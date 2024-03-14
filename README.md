@@ -23,11 +23,8 @@ docker-compose up
 * Run the command below
 ```  
 mvn spring-boot:run  
-```  
-
-
+```
 * Go to [How to test](#How to test) Section
-* default admin credentials: admin@admin.com/hello123
 
 ### Documentation
 1. ER Diagram can be found in the root folder of the project (erdiagram.png)
