@@ -16,7 +16,6 @@ mvn clean install
 docker-compose up  
 ```  
 ### Non-docker
-* Run the command below
 * Install MySQL 8.0 above
 * Configure your MySQL
 * Configure .env to reflect the Mysql configuration
