@@ -18,6 +18,7 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.Websock
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.core.WebsocketResponseDTO;
 
 import java.net.URI;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,14 +28,14 @@ public class WebsocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     public static final String VALID_QUERY_PARAMS = "suggest";
 
-    private HashMap<WebSocketAction, WebsocketCommand> commandHashMap;
+    private EnumMap<WebSocketAction, WebsocketCommand> commandHashMap;
 
     private WebsocketUsers websocketUsers;
 
     public WebsocketHandler(List<? extends WebsocketCommand> handlers, WebsocketUsers websocketUsers) {
 
         this.websocketUsers = websocketUsers;
-        commandHashMap = new HashMap<>();
+        commandHashMap = new EnumMap<>(WebSocketAction.class);
 
         for(var actionEnum : WebSocketAction.values()){
 

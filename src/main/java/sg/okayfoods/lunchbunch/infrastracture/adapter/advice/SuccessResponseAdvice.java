@@ -2,7 +2,6 @@ package sg.okayfoods.lunchbunch.infrastracture.adapter.advice;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.data.web.ProjectingJackson2HttpMessageConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.GenericResponse;
 
 @ControllerAdvice
-
 public class SuccessResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override

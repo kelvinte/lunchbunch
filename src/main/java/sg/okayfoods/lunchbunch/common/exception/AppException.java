@@ -6,7 +6,7 @@ import sg.okayfoods.lunchbunch.common.constant.ErrorCode;
 
 @Getter
 public class AppException extends ErrorResponseException {
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
     public  AppException(ErrorCode exception) {
         super(exception.getStatusCode(), exception.getProblemDetail(), null);
         this.errorCode = exception;

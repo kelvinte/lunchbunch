@@ -7,8 +7,6 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.request.Crea
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core.RedisSubscriber;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketBroadcaster;
-import sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.websocket.core.WebsocketUsers;
-
 @Service
 public class RedisNotifier implements RedisSubscriber {
 

@@ -8,7 +8,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface LunchPlanRepository extends PagingAndSortingRepository<LunchPlan, Long>,JpaRepository<LunchPlan, Long> {

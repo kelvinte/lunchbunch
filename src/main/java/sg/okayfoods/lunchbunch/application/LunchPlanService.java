@@ -19,8 +19,6 @@ import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanReq
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.mapper.LunchPlanMapper;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
@@ -29,11 +27,11 @@ import java.util.UUID;
 public class LunchPlanService {
 
 
-    private LunchPlanRepository lunchPlanRepository;
-    private LunchPlanWinnerRepository lunchPlanWinnerRepository;
-    private LunchPlanMapper lunchPlanMapper;
+    private final LunchPlanRepository lunchPlanRepository;
+    private final LunchPlanWinnerRepository lunchPlanWinnerRepository;
+    private final LunchPlanMapper lunchPlanMapper;
 
-    private LoggedInUserService loggedInUserService;
+    private final LoggedInUserService loggedInUserService;
     public LunchPlanService(LunchPlanRepository lunchPlanRepository,
                             LunchPlanWinnerRepository lunchPlanWinnerRepository,
                             LunchPlanMapper lunchPlanMapper,

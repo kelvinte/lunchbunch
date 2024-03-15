@@ -2,8 +2,6 @@ package sg.okayfoods.lunchbunch.infrastracture.adapter.incoming.redis.core;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import sg.okayfoods.lunchbunch.common.util.JsonUtils;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.redis.RedisDTO;

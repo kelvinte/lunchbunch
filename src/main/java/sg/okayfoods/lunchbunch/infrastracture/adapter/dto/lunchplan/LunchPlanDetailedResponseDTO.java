@@ -2,7 +2,6 @@ package sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import sg.okayfoods.lunchbunch.domain.entity.LunchPlanWinner;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.LunchPlanWinnerResponseDTO;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.websocket.response.SuggestionResponseDTO;
 

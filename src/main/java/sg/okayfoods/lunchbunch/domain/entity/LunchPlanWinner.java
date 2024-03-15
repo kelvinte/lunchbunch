@@ -3,7 +3,6 @@ package sg.okayfoods.lunchbunch.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 

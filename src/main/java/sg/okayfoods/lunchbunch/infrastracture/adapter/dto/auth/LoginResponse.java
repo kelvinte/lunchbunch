@@ -2,8 +2,6 @@ package sg.okayfoods.lunchbunch.infrastracture.adapter.dto.auth;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @Builder

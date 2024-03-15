@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTimeUtils {
 
+    private DateTimeUtils() {
+    }
 
     public static final DateTimeFormatter ISO_LOCAL_DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static LocalDate convert(String date){

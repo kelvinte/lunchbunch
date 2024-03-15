@@ -3,7 +3,6 @@ package sg.okayfoods.lunchbunch.application;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sg.okayfoods.lunchbunch.common.constant.Constants;

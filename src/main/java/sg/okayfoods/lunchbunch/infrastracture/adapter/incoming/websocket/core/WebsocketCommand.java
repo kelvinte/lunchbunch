@@ -8,7 +8,7 @@ import java.lang.reflect.ParameterizedType;
 
 public abstract class WebsocketCommand<T, R> {
     private Class<T> requestClass;
-	public WebsocketCommand(){
+	protected WebsocketCommand(){
         ParameterizedType superClass = (ParameterizedType) getClass().getGenericSuperclass();
         requestClass = (Class<T>) superClass.getActualTypeArguments()[0];
     }
