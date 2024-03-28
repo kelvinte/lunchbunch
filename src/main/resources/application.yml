@@ -9,7 +9,10 @@ spring:
     show-sql: true
   liquibase:
     change-log: classpath:db/changelog/changelog-master.xml
-
+  cassandra:
+    keyspace-name: lunchbunch
+    contact-points: 127.0.0.1:9042
+    local-datacenter: datacenter1
 
 redis:
   host: ${REDIS_HOST}
