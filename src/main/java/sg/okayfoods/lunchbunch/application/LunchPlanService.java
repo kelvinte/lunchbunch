@@ -1,5 +1,7 @@
 package sg.okayfoods.lunchbunch.application;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -9,9 +11,11 @@ import sg.okayfoods.lunchbunch.common.exception.AppException;
 import sg.okayfoods.lunchbunch.common.util.DateTimeUtils;
 import sg.okayfoods.lunchbunch.domain.entity.AppUser;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlan;
+import sg.okayfoods.lunchbunch.domain.entity.LunchPlanMongo;
 import sg.okayfoods.lunchbunch.domain.entity.LunchPlanWinner;
 import sg.okayfoods.lunchbunch.domain.repository.LunchPlanRepository;
 import sg.okayfoods.lunchbunch.domain.repository.LunchPlanWinnerRepository;
+import sg.okayfoods.lunchbunch.domain.repository.MongoLunchPlanRepository;
 import sg.okayfoods.lunchbunch.domain.user.LoggedInUser;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.common.PaginatedResponse;
 import sg.okayfoods.lunchbunch.infrastracture.adapter.dto.lunchplan.LunchPlanDetailedResponseDTO;
@@ -40,6 +44,18 @@ public class LunchPlanService {
         this.lunchPlanWinnerRepository = lunchPlanWinnerRepository;
         this.lunchPlanMapper = lunchPlanMapper;
         this.loggedInUserService = loggedInUserService;
+    }
+
+    @Autowired
+    private MongoLunchPlanRepository mongoLunchPlanRepository;
+
+    @PostConstruct
+    public void postConstruct(){
+        LunchPlanMongo mongo = LunchPlanMongo.builder()
+                .uuid(UUID.randomUUID().toString())
+                .description("test")
+                .build();
+        mongoLunchPlanRepository.save(mongo);
     }
 
     public LunchPlanResponseDTO create(LunchPlanRequestDTO request){
